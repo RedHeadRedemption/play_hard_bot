@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  play_hard_bot:
+    image: node:16.8.0
+    working_dir: /workdir
+    ports:
+      - "8765:8765"
+    volumes:
+      - ./:/workdir
+    command: bash -c "node ./src/deployCommands.js && node ./src/main.js"
