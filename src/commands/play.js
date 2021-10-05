@@ -9,7 +9,8 @@ module.exports = {
 
 
         await interaction.reply("Started Playing");
-        await setTimeout((res => {console.log("Circle ended")}), 2000 );
+        await setTimeout(() => { interaction.deleteReply(); }, 2000 );
+
     }
     
 }
