@@ -2,6 +2,8 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 
 const sessionTimers = new Map();
 
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 
 module.exports = {
     data : new SlashCommandBuilder()
@@ -44,7 +46,14 @@ module.exports = {
             
             const currentChannel = interaction.channelId;
             interaction.client.channels.fetch(currentChannel)
-            .then(channel => { channel.send(" Hi there")});
+            .then(channel => { 
+                channel.send(" Hi there")
+                .then(message => { 
+                    delay(15000).then(() => message.delete()); //Change to 30000 on production
+                }) 
+            })
+            // .then(message => { setTimeout(message.delete(), 3000); });
+
             console.log("cooldowns after deletion: ", sessionTimers);
         }, cooldown );
 
