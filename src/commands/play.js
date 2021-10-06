@@ -1,5 +1,7 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
+const sessionTimers = new Map();
+
 
 module.exports = {
     data : new SlashCommandBuilder()
@@ -14,6 +16,7 @@ module.exports = {
             .addChoice('Hard','hard_mode')
         ),
     async execute(interaction) {
+        
         const mode = interaction.options.getString('mode');
         let cooldown = 3000;
 
@@ -27,9 +30,24 @@ module.exports = {
             cooldown = 9000;
         }
         
+        sessionTimers.set(interaction.user.tag, Date.now() + cooldown);
+        console.log("New session started", sessionTimers);
 
         await interaction.reply("Started Playing");
-        await setTimeout(() => { interaction.deleteReply(); }, cooldown );
+
+        //Timeout for deleting reply
+        await setTimeout(() => { interaction.deleteReply(); }, 3000 ); //change to 30000 on production
+
+        //Timeout for playing session
+        await setTimeout(() => { 
+            sessionTimers.delete(interaction.user.tag);
+            
+            const currentChannel = interaction.channelId;
+            interaction.client.channels.fetch(currentChannel)
+            .then(channel => { channel.send(" Hi there")});
+            console.log("cooldowns after deletion: ", sessionTimers);
+        }, cooldown );
+
 
     }
     
