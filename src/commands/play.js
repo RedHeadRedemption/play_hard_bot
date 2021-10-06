@@ -35,7 +35,7 @@ module.exports = {
         sessionTimers.set(interaction.user.tag, Date.now() + cooldown);
         console.log("New session started", sessionTimers);
 
-        await interaction.reply("Started Playing");
+        await interaction.reply(` ${interaction.member.displayName} Started Playing `);
 
         //Timeout for deleting reply
         await setTimeout(() => { interaction.deleteReply(); }, 3000 ); //change to 30000 on production
@@ -45,14 +45,16 @@ module.exports = {
             sessionTimers.delete(interaction.user.tag);
             
             const currentChannel = interaction.channelId;
+
+            //Sending Ending message
             interaction.client.channels.fetch(currentChannel)
             .then(channel => { 
-                channel.send(" Hi there")
+                channel.send(`${interaction.member.displayName} has finished successfully. Great Job, Keep pushing forward!`)
+                //deleting ending message
                 .then(message => { 
                     delay(15000).then(() => message.delete()); //Change to 30000 on production
                 }) 
             })
-            // .then(message => { setTimeout(message.delete(), 3000); });
 
             console.log("cooldowns after deletion: ", sessionTimers);
         }, cooldown );
